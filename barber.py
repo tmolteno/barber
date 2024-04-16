@@ -81,7 +81,9 @@ if __name__ == "__main__":
 
     print("Max Vis Report")
     print(f"    Max Vis = {max_vis}")
-    print(f"    Index = {max_index}")
+    print(f"        at vis_index = {max_index[0]}")
+    print(f"        at channel_index = {max_index[1]}")
+    print(f"        at pol_index = {max_index[2]}")
     print(f"    vis percentiles (n={absvis.shape[0]}):")
     print(f"        5%={p05 :5.2f}")
     print(f"        50%={p50 :5.2f}")
