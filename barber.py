@@ -101,3 +101,17 @@ if __name__ == "__main__":
     print(f"    u = {u_arr[dump_index]}")
     print(f"    v = {v_arr[dump_index]}")
     print(f"    w = {w_arr[dump_index]}")
+
+    if ARGS.debug:
+        min_index = np.unravel_index(np.argmin(absvis, axis=None), shape=absvis.shape)
+        dump_index = min_index[0]
+
+        print("\n DEBUG: Min Vis Report")
+        print(f"    Min |v| = {absvis[min_index]}")
+        print(f"    flags[{min_index}] = {flags[min_index]}")
+        print(f"    ANT1 = {ant1[dump_index]}")
+        print(f"    ANT2 = {ant2[dump_index]}")
+        print(f"    u = {u_arr[dump_index]}")
+        print(f"    v = {v_arr[dump_index]}")
+        print(f"    w = {w_arr[dump_index]}")
+
