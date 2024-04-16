@@ -72,26 +72,32 @@ if __name__ == "__main__":
         raise RuntimeError(f"Measurement set {ARGS.ms} not found")
 
     ant1, ant2, u_arr, v_arr, w_arr, raw_vis, flags = casa_read_ms(ARGS.ms, ARGS.field)
-    print(np.max(flags))
-    absvis = np.abs(raw_vis)
+
+    mask = np.where(np.logical_not(flags), 1, -1)
+
+    absvis = np.abs(raw_vis)*mask
     max_index = np.unravel_index(np.argmax(absvis, axis=None), shape=absvis.shape)
 
-    max_vis = np.max(absvis*(1-flags))
-    p05, p50, p95, p99 = np.percentile(absvis, [5, 50, 95, 99])
+    max_vis = absvis[max_index]
+    p01, p05, p50, p95, p99 = np.percentile(absvis, [1, 5, 50, 95, 99])
+
+    dump_index = max_index[0]
+    channel_index = max_index[1]
+    pol_index = max_index[2]
 
     print("Max Vis Report")
-    print(f"    Max Vis = {max_vis}")
-    print(f"        at vis_index = {max_index[0]}")
-    print(f"        at channel_index = {max_index[1]}")
-    print(f"        at pol_index = {max_index[2]}")
-    print(f"    flags (n={flags[max_index]}):")
+    print(f"    Max |v| = {max_vis}")
+    print(f"        at vis_index = {dump_index}")
+    print(f"        at channel_index = {channel_index}")
+    print(f"        at pol_index = {pol_index}")
+    print(f"    flags[{max_index}] = {flags[max_index]}")
     print(f"    vis percentiles (n={absvis.shape[0]}):")
     print(f"        5%={p05 :5.2f}")
     print(f"        50%={p50 :5.2f}")
     print(f"        95%={p95:5.2f}")
     print(f"        99%={p99:5.2f}")
-    print(f"    ANT1 = {ant1[max_index[0]]}")
-    print(f"    ANT2 = {ant2[max_index[0]]}")
-    print(f"    u = {u_arr[max_index[0]]}")
-    print(f"    v = {v_arr[max_index[0]]}")
-    print(f"    w = {w_arr[max_index[0]]}")
+    print(f"    ANT1 = {ant1[dump_index]}")
+    print(f"    ANT2 = {ant2[dump_index]}")
+    print(f"    u = {u_arr[dump_index]}")
+    print(f"    v = {v_arr[dump_index]}")
+    print(f"    w = {w_arr[dump_index]}")
