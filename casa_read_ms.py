@@ -12,7 +12,6 @@ import numpy as np
 from casacore.tables import table
 
 logger = logging.getLogger(__name__)
-print(__name__)
 
 def read_ms(ms_file, field_id=0, bl_max=9e99):
 
@@ -49,14 +48,6 @@ def read_ms(ms_file, field_id=0, bl_max=9e99):
 
     raw_vis = subt.getcol("DATA")
 
-    try:
-        # Deal with the case where WEIGHT_SPECTRUM is not present.s
-        subt = ms.query(f"FIELD_ID=={field_id}",
-                        sortlist="ARRAY_ID", columns="WEIGHT_SPECTRUM")
-        weight_spectrum = subt.getcol("WEIGHT_SPECTRUM")[:, :, :][:, :]
-    except RuntimeError as e:
-        logger.debug(f"{e}")
-        weight_spectrum = np.ones_like(raw_vis)
 
     flags = flags[:, :, :][:, :]
     uvw = uvw[:, :]
@@ -79,10 +70,9 @@ def read_ms(ms_file, field_id=0, bl_max=9e99):
     # 1.0 / 2*np.sin(theta) = limit_u
     limit_uvw = np.max(np.abs(uvw), 0)
 
-    bl = np.sqrt(uvw[:, 0] ** 2 + uvw[:, 1] ** 2 + uvw[:, 2] ** 2)
-    good_data = np.array(
-        np.where((bl < bl_max))
-    ).T.reshape((-1,))
+    # bl = np.sqrt(uvw[:, 0] ** 2 + uvw[:, 1] ** 2 + uvw[:, 2] ** 2)
+    good_data = np.transpose(np.nonzero(flags))
+    logger.debug(f"Indices {good_data.shape}")
 
     logger.debug("Maximum UVW: {}".format(limit_uvw))
     logger.debug("Minimum UVW: {}".format(np.min(np.abs(uvw), 0)))
@@ -93,23 +83,20 @@ def read_ms(ms_file, field_id=0, bl_max=9e99):
             "       U[{}]: {:5.2f} {:5.2f} {:5.2f}".format(i, p05, p50, p95)
         )
 
-
-    logger.debug(f"Indices {good_data.shape}")
-
+    good_dumps = good_data[:,0]
+    logger.debug(f"Good Dumps {good_dumps.shape}")
     #
     #   Now read the remaining data
     #
-    ant1 = ant1[good_data]
-    ant2 = ant2[good_data]
-    weight_spectrum = weight_spectrum[good_data]
+    ant1 = ant1
+    ant2 = ant2
 
-    raw_vis = raw_vis[good_data]
     logger.debug(f"Raw Vis {raw_vis.shape}")
 
-    u_arr = uvw[good_data, 0]
-    v_arr = uvw[good_data, 1]
-    w_arr = uvw[good_data, 2]
+    u_arr = uvw[:, 0]
+    v_arr = uvw[:, 1]
+    w_arr = uvw[:, 2]
     logger.debug(f"u_arr {u_arr.shape}")
 
     # return ant_p, ant1, ant2, u_arr, v_arr, w_arr, frequencies, raw_vis, corrected_vis, seconds, rms_arr
-    return ant1, ant2, u_arr, v_arr, w_arr, raw_vis
+    return ant1, ant2, u_arr, v_arr, w_arr, raw_vis, flags

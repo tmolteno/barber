@@ -71,12 +71,12 @@ if __name__ == "__main__":
     if not os.path.exists(ARGS.ms):
         raise RuntimeError(f"Measurement set {ARGS.ms} not found")
 
-    ant1, ant2, u_arr, v_arr, w_arr, raw_vis = casa_read_ms(ARGS.ms, ARGS.field)
-
+    ant1, ant2, u_arr, v_arr, w_arr, raw_vis, flags = casa_read_ms(ARGS.ms, ARGS.field)
+    print(np.max(flags))
     absvis = np.abs(raw_vis)
     max_index = np.unravel_index(np.argmax(absvis, axis=None), shape=absvis.shape)
 
-    max_vis = np.max(absvis)
+    max_vis = np.max(absvis*(1-flags))
     p05, p50, p95, p99 = np.percentile(absvis, [5, 50, 95, 99])
 
     print("Max Vis Report")
@@ -84,6 +84,7 @@ if __name__ == "__main__":
     print(f"        at vis_index = {max_index[0]}")
     print(f"        at channel_index = {max_index[1]}")
     print(f"        at pol_index = {max_index[2]}")
+    print(f"    flags (n={flags[max_index]}):")
     print(f"    vis percentiles (n={absvis.shape[0]}):")
     print(f"        5%={p05 :5.2f}")
     print(f"        50%={p50 :5.2f}")
