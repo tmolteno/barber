@@ -100,8 +100,7 @@ if __name__ == "__main__":
         pol_index = ARGS.pol
 
     ts = inverse[dump_index]
-    print(f"ts: {ts}: {times[ts]}")
-    
+
     # Convert from reduced Julian Date to timestamp.
     timestamp = datetime.datetime(
             1858, 11, 17, 0, 0, 0, tzinfo=datetime.timezone.utc
