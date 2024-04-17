@@ -22,11 +22,16 @@ if __name__ == "__main__":
                         help="The source measurement set.")
     parser.add_argument('--field', type=int, default=0,
                         help="Use this FIELD_ID from the measurement set.")
+    parser.add_argument('--pol', type=int, default=None,
+                        help="Specify the polarization (-1 means all)")
 
-    parser.add_argument('--debug', action="store_true",
-                        help="Display debugging information")
+    parser.add_argument('--uncorrected', action="store_true",
+                        help="Use RAW uncorrected visibilities")
+
     parser.add_argument('--version', action="store_true",
                         help="Display the current version")
+    parser.add_argument('--debug', action="store_true",
+                        help="Display debugging information")
 
     ARGS = parser.parse_args()
 
@@ -71,9 +76,13 @@ if __name__ == "__main__":
     if not os.path.exists(ARGS.ms):
         raise RuntimeError(f"Measurement set {ARGS.ms} not found")
 
-    ant1, ant2, u_arr, v_arr, w_arr, raw_vis, flags = casa_read_ms(ARGS.ms, ARGS.field)
+    results = casa_read_ms(ARGS.ms,
+                           ARGS.field,
+                           pol=ARGS.pol,
+                           uncorrected = ARGS.uncorrected)
+    ant1, ant2, u_arr, v_arr, w_arr, raw_vis, flags = results
 
-    mask = np.where(np.logical_not(flags), 1, -1)
+    mask = np.where(np.logical_not(flags), 1, 0)
 
     absvis = np.abs(raw_vis)*mask
     max_index = np.unravel_index(np.argmax(absvis, axis=None), shape=absvis.shape)
@@ -83,7 +92,11 @@ if __name__ == "__main__":
 
     dump_index = max_index[0]
     channel_index = max_index[1]
-    pol_index = max_index[2]
+
+    if ARGS.pol is None:
+        pol_index = max_index[2]
+    else:
+        pol_index = ARGS.pol
 
     print("Max Vis Report")
     print(f"    Max |v| = {max_vis}")

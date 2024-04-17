@@ -13,7 +13,7 @@ from casacore.tables import table
 
 logger = logging.getLogger(__name__)
 
-def read_ms(ms_file, field_id=0, bl_max=9e99):
+def read_ms(ms_file, field_id=0, bl_max=9e99, uncorrected=True, pol=None):
 
     ms = table(ms_file, ack=False)
 
@@ -48,8 +48,15 @@ def read_ms(ms_file, field_id=0, bl_max=9e99):
 
     raw_vis = subt.getcol("DATA")
 
+    def get_all(_x):
+        if pol is None:
+            return _x[:,:,:]
+        else:
+            return _x[:,:,pol]
 
-    flags = flags[:, :, :][:, :]
+    raw_vis = get_all(raw_vis)
+    flags = get_all(flags)
+
     uvw = uvw[:, :]
     logger.debug("uvw {}".format(uvw.shape))
     ant1 = ant1[:]
