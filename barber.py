@@ -4,6 +4,7 @@
 #
 import os
 
+import datetime
 from datetime import datetime as dt
 
 import argparse
@@ -80,7 +81,7 @@ if __name__ == "__main__":
                            ARGS.field,
                            pol=ARGS.pol,
                            uncorrected = ARGS.uncorrected)
-    ant1, ant2, u_arr, v_arr, w_arr, raw_vis, flags = results
+    ant1, ant2, u_arr, v_arr, w_arr, raw_vis, flags, times, inverse = results
 
     mask = np.where(np.logical_not(flags), 1, 0)
 
@@ -98,12 +99,21 @@ if __name__ == "__main__":
     else:
         pol_index = ARGS.pol
 
+    ts = inverse[dump_index]
+    print(f"ts: {ts}: {times[ts]}")
+    
+    # Convert from reduced Julian Date to timestamp.
+    timestamp = datetime.datetime(
+            1858, 11, 17, 0, 0, 0, tzinfo=datetime.timezone.utc
+    ) + datetime.timedelta(seconds=times[ts])
+
     print("Max Vis Report")
     print(f"    Max |v| = {max_vis}")
     print(f"        at vis_index = {dump_index}")
     print(f"        at channel_index = {channel_index}")
     print(f"        at pol_index = {pol_index}")
     print(f"    flags[{max_index}] = {flags[max_index]}")
+    print(f"    Time = {timestamp}")
     print(f"    vis percentiles (n={absvis.shape[0]}):")
     print(f"        5%={p05 :5.2f}")
     print(f"        50%={p50 :5.2f}")

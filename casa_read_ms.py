@@ -13,6 +13,7 @@ from casacore.tables import table
 
 logger = logging.getLogger(__name__)
 
+
 def read_ms(ms_file, field_id=0, bl_max=9e99, uncorrected=True, pol=None):
 
     ms = table(ms_file, ack=False)
@@ -34,7 +35,13 @@ def read_ms(ms_file, field_id=0, bl_max=9e99, uncorrected=True, pol=None):
     phase_dir = fields.getcol("PHASE_DIR")[field_id][0]
     name = fields.getcol("NAME")[field_id]
     field_time = fields.getcol("TIME")[field_id]
-    logger.debug(f"Field {name} (index {field_id}): Phase Dir {np.degrees(phase_dir)}, t={field_time}")
+    print(f"Field {name} (index {field_id}): Phase Dir {np.degrees(phase_dir)}, t={field_time}")
+
+    times = subt.getcol("TIME")
+    logger.debug(f"times {times.shape}")
+    time_steps, inverse = np.unique(times, return_inverse=True)
+    logger.debug(f"time_steps {time_steps - time_steps[0]}")
+    logger.debug(f"inverse {inverse}")
 
     uvw = subt.getcol("UVW")
     logger.debug(f"uvw {uvw.shape}")
@@ -50,9 +57,9 @@ def read_ms(ms_file, field_id=0, bl_max=9e99, uncorrected=True, pol=None):
 
     def get_all(_x):
         if pol is None:
-            return _x[:,:,:]
+            return _x[:, :, :]
         else:
-            return _x[:,:,pol]
+            return _x[:, :, pol]
 
     raw_vis = get_all(raw_vis)
     flags = get_all(flags)
@@ -70,6 +77,13 @@ def read_ms(ms_file, field_id=0, bl_max=9e99, uncorrected=True, pol=None):
 
     logger.debug(f"Frequencies = {frequencies.shape}")
     logger.debug(f"NUM_CHAN = {np.array(spw.NUM_CHAN[0])}")
+
+
+
+    ms.close()
+
+
+
 
     logger.debug("Flags: {}".format(flags.shape))
 
@@ -106,4 +120,4 @@ def read_ms(ms_file, field_id=0, bl_max=9e99, uncorrected=True, pol=None):
     logger.debug(f"u_arr {u_arr.shape}")
 
     # return ant_p, ant1, ant2, u_arr, v_arr, w_arr, frequencies, raw_vis, corrected_vis, seconds, rms_arr
-    return ant1, ant2, u_arr, v_arr, w_arr, raw_vis, flags
+    return ant1, ant2, u_arr, v_arr, w_arr, raw_vis, flags, times, inverse

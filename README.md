@@ -24,11 +24,12 @@ Then run barber
     Barber: It will remove your fringe in a jiffy.
 
     options:
-    -h, --help     show this help message and exit
-    --ms MS        The source measurement set. (default: None)
-    --field FIELD  Use this FIELD_ID from the measurement set. (default: 0)
-    --debug        Display debugging information (default: False)
-    --version      Display the current version (default: False)
+        -h, --help     show this help message and exit
+        --ms MS        The source measurement set. (default: None)
+        --field FIELD  Use this FIELD_ID from the measurement set. (default: 0)
+        --pol POL      Specify the polarization (-1 means all) (default: None)
+        --version      Display the current version (default: False)
+        --debug        Display debugging information (default: False)
 
 ## Typical Output
 
