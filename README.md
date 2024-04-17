@@ -4,10 +4,7 @@ Barber removes fringes in a jiffy.
 
 | Before    | After |
 | -------- | ------- |
-| ![A Fringe](./doc/fringe.jpeg)  | ![A Fringe](./doc/fringe.jpeg)
-    |
-
-
+| ![A Fringe](./doc/fringe.jpeg)  | ![A Fringe](./doc/fringe.jpeg) |
 
 Worlds stupidest tool. Just finds the largest visibility and reports stuff for you. 
 
@@ -74,7 +71,8 @@ Thanks to Kenda for inspiring this silly tool.
 
 ## TODO
 
-Use dask so that the ms doesn't have to fit in memory at all.
+* Use dask so that the ms doesn't have to fit in memory at all.
+* an analyzer that takes the image and reports the offending baseline.
 
 ## Changelog
 
