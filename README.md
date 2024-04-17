@@ -1,6 +1,11 @@
 # barber
 
-Worlds stupidest tool. Just finds the largest visibility and reports stuff for you.
+Barber removes fringes in a jiffy. 
+
+![A Fringe](./doc/fringe.jpeg)
+
+
+Worlds stupidest tool. Just finds the largest visibility and reports stuff for you. 
 
 ## Install
 
