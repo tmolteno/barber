@@ -2,9 +2,7 @@
 
 Barber removes fringes in a jiffy. 
 
-| Before    | After |
-| -------- | ------- |
-| ![A Fringe](./doc/fringe.jpeg)  | ![A Fringe](./doc/fringe.jpeg) |
+![A Fringe](./doc/barber_before_after.jpeg) 
 
 Worlds stupidest tool. Just finds the largest visibility and reports stuff for you. 
 

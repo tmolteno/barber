@@ -89,7 +89,7 @@ if __name__ == "__main__":
     max_index = np.unravel_index(np.argmax(absvis, axis=None), shape=absvis.shape)
 
     max_vis = absvis[max_index]
-    p01, p05, p50, p95, p99 = np.percentile(absvis, [1, 5, 50, 95, 99])
+    p01, p05, p50, p95, p99, p999 = np.percentile(absvis, [1, 5, 50, 95, 99, 99.9])
 
     dump_index = max_index[0]
     channel_index = max_index[1]
@@ -118,6 +118,7 @@ if __name__ == "__main__":
     print(f"        50%={p50 :5.2f}")
     print(f"        95%={p95:5.2f}")
     print(f"        99%={p99:5.2f}")
+    print(f"        99.9%={p999:5.2f}")
     print(f"    ANT1 = {ant1[dump_index]}")
     print(f"    ANT2 = {ant2[dump_index]}")
     print(f"    u = {u_arr[dump_index]}")
